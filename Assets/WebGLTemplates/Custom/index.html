@@ -41,7 +41,6 @@
   </style>
 </head>
 <body>
-  <!-- Voltar -->
   <button id="back-button" onclick="window.history.back()">← Voltar</button>
 
   <div id="unity-container" class="unity-desktop">
@@ -61,47 +60,40 @@
   </div>
 
   <script>
-    // Banner helper
     function unityShowBanner(msg, type) {
       const c = document.querySelector("#unity-warning");
       function upd() { c.style.display = c.children.length ? 'block' : 'none'; }
       const e = document.createElement('div');
       e.innerHTML = msg;
       c.appendChild(e);
-      if (type === 'error') {
-        e.style = 'background:red;padding:10px;';
-      } else {
-        if (type === 'warning') e.style = 'background:yellow;padding:10px;';
-        setTimeout(() => { c.removeChild(e); upd(); }, 5000);
-      }
+      if (type === 'error') e.style = 'background:red;padding:10px;';
+      else if (type === 'warning') e.style = 'background:yellow;padding:10px;';
+      setTimeout(() => { c.removeChild(e); upd(); }, 5000);
       upd();
     }
 
-    // Read URL params
     const ps = new URLSearchParams(window.location.search);
-    const discipline = ps.get('discipline') || '';
-    const subarea    = ps.get('subarea')    || '';
-    const schoolId   = ps.get('school_id')  || '';
-    const gameId   = ps.get('game_id')  || '';
-    const sessionNumber = ps.get('session_number') || '';
+    const discipline = String(ps.get('discipline') || '');
+    const subarea = String(ps.get('subarea') || '');
+    const schoolId = String(ps.get('school_id') || '');
+    const gameId = String(ps.get('game_id') || '');
+    const sessionNumber = String(ps.get('session_number') || '');
 
-    // Unity build configuration
     const buildUrl  = "Build";
     const loaderUrl = buildUrl + "/build.loader.js";
     const config = {
-      dataUrl:            buildUrl + "/build.data",
-      frameworkUrl:       buildUrl + "/build.framework.js",
-      codeUrl:            buildUrl + "/build.wasm",
+      dataUrl: buildUrl + "/build.data",
+      frameworkUrl: buildUrl + "/build.framework.js",
+      codeUrl: buildUrl + "/build.wasm",
       streamingAssetsUrl: "StreamingAssets",
-      showBanner:         unityShowBanner,
-      arguments:          [ discipline, subarea, schoolId, gameId, sessionNumber ]
+      showBanner: unityShowBanner,
+      arguments: [ discipline, subarea, schoolId, gameId, sessionNumber ]
     };
 
-    // Canvas setup
     const canvas = document.querySelector("#unity-canvas");
     if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
       const m = document.createElement('meta');
-      m.name    = 'viewport';
+      m.name = 'viewport';
       m.content = 'width=device-width,height=device-height,initial-scale=1.0,user-scalable=no,shrink-to-fit=yes';
       document.head.appendChild(m);
       document.querySelector("#unity-container").className = "unity-mobile";
@@ -112,36 +104,48 @@
     }
     document.querySelector("#unity-loading-bar").style.display = "block";
 
-    // Load Unity
     let unityInstance = null;
     const script = document.createElement("script");
     script.src = loaderUrl;
     script.onload = () => {
       createUnityInstance(canvas, config, progress => {
         document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-      })
-      .then(instance => {
+      }).then(instance => {
         unityInstance = instance;
         document.querySelector("#unity-loading-bar").style.display = "none";
         document.querySelector("#unity-fullscreen-button").onclick = () => unityInstance.SetFullscreen(1);
 
-        // Send initial params
-        console.log("Enviando params para Unity:", { discipline, subarea, schoolId, gameId, sessionNumber });
-        unityInstance.SendMessage('GameManager', 'OnReceiveParams', JSON.stringify({ discipline, subarea, schoolId, gameId, sessionNumber }));
-
-
-        // When Firebase Auth is ready, forward token
-        window.firebaseAuth.onAuthStateChanged(user => {
-          if (user && unityInstance) {
-            user.getIdToken().then(token => {
-              console.log("Chamando OnReceiveAuthToken");
-              unityInstance.SendMessage('GameManager', 'OnReceiveAuthToken', token);
-            });
+        // Função wrapper segura para SendMessage
+        function safeSendMessage(objName, method, message) {
+          if (!unityInstance) return;
+          try {
+            unityInstance.SendMessage(objName, method, message);
+          } catch(e) {
+            console.warn(`[Unity SendMessage Error] ${method}`, e);
           }
-        });
+        }
 
-      })
-      .catch(err => alert(err));
+        const paramsToUnity = {
+          discipline, subarea, schoolId, gameId, sessionNumber
+        };
+
+        // Espera 100ms para garantir que GameManager e métodos existam
+        setTimeout(() => {
+          console.log("Enviando params para Unity:", JSON.stringify(paramsToUnity));
+          safeSendMessage('GameManager', 'OnReceiveParams', JSON.stringify(paramsToUnity));
+
+          // Envia token Firebase quando disponível
+          window.firebaseAuth.onAuthStateChanged(user => {
+            if (user) {
+              user.getIdToken().then(token => {
+                console.log("Chamando OnReceiveAuthToken");
+                safeSendMessage('GameManager', 'OnReceiveAuthToken', String(token));
+              });
+            }
+          });
+        }, 1000);
+
+      }).catch(err => alert(err));
     };
     document.body.appendChild(script);
   </script>

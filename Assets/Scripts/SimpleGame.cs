@@ -11,9 +11,6 @@ public class SimpleGame : MonoBehaviour
     public GameObject restartButton3D;
     public string backendUrl = "https://adapt2learn-895112363610.us-central1.run.app/api/events/game";
 
-    [HideInInspector] public string gameId;
-    [HideInInspector] public string authToken;
-
     private bool finished = false;
     private float startTime;
 
@@ -53,10 +50,10 @@ public class SimpleGame : MonoBehaviour
     IEnumerator SendGameEvent(float elapsedTime)
     {
         string elapsedStr = elapsedTime.ToString("F3", System.Globalization.CultureInfo.InvariantCulture);
-        string json = $"{{\"event_type\":\"reach_goal\",\"payload\":{{\"time\":{elapsedStr}}},\"game_id\":\"{gameId}\"}}";
+        string json = $"{{\"event_type\":\"reach_goal\",\"payload\":{{\"time\":{elapsedStr}}},\"game_id\":\"{GameManager.Instance.GameId}\"}}";
 
         Debug.Log(json);
-        Debug.Log(authToken);
+        Debug.Log(GameManager.Instance.AuthToken);
         byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
 
         using (UnityWebRequest req = new UnityWebRequest(backendUrl, "POST"))
@@ -64,7 +61,7 @@ public class SimpleGame : MonoBehaviour
             req.uploadHandler = new UploadHandlerRaw(bodyRaw);
             req.downloadHandler = new DownloadHandlerBuffer();
             req.SetRequestHeader("Content-Type", "application/json");
-            req.SetRequestHeader("Authorization", "Bearer " + authToken);
+            req.SetRequestHeader("Authorization", "Bearer " + GameManager.Instance.AuthToken);
 
             yield return req.SendWebRequest();
 

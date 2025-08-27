@@ -380,8 +380,6 @@ MonoBehaviour:
   speed: 5
   restartButton3D: {fileID: 0}
   backendUrl: https://adapt2learn-895112363610.us-central1.run.app/api/events/game
-  gameId: tutorial_game_001
-  authToken: 
 --- !u!1 &798950290
 GameObject:
   m_ObjectHideFlags: 0
@@ -495,6 +493,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64d069e6344594061bbe0c79f8bf8ca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TextMeshTimer
+--- !u!1 &1782182762
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1782182764}
+  - component: {fileID: 1782182763}
+  m_Layer: 0
+  m_Name: ExampleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1782182763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1782182762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9745e8185e124a01ae362467487d198, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseUrl: https://adapt2learn-895112363610.us-central1.run.app
+--- !u!4 &1782182764
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1782182762}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.84913, y: 0, z: 6.89523}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1897015013
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,7 +639,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1951587565}
-  - component: {fileID: 1951587564}
+  - component: {fileID: 1951587566}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -604,19 +647,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1951587564
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1951587563}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 600d8730beb1e48daad01ebd06f1117c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  simpleGame: {fileID: 520344779}
 --- !u!4 &1951587565
 Transform:
   m_ObjectHideFlags: 0
@@ -632,6 +662,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1951587566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1951587563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 600d8730beb1e48daad01ebd06f1117c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  exampleManager: {fileID: 1782182763}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -641,3 +684,4 @@ SceneRoots:
   - {fileID: 187978723}
   - {fileID: 798950293}
   - {fileID: 1951587565}
+  - {fileID: 1782182764}
