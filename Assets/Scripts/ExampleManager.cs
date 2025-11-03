@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-
 [Serializable]
 public class ExampleItemDTO
 {
@@ -17,10 +16,12 @@ public class ExampleItemDTO
     public string scratch_solution;
 }
 
-
 public class ExampleManager : MonoBehaviour
 {
     public string baseUrl = "https://adapt2learn-895112363610.us-central1.run.app";
+
+    // Evento público que dispara quando um exemplo é carregado
+    public Action<ExampleItemDTO> OnExampleFetched;
 
     public void StartFetchingExamples()
     {
@@ -74,16 +75,20 @@ public class ExampleManager : MonoBehaviour
         var list = new List<ExampleItemDTO>(items);
         Debug.Log($"[ExampleManager] Recebidos {list.Count} exemplos.");
 
+        // Dispara callback externo
+        if (list.Count > 0)
+        {
+            var sample = list[UnityEngine.Random.Range(0, list.Count)];
+            Debug.Log($"Exemplo amostrado:\nPergunta: {sample.question}");
+            OnExampleFetched?.Invoke(sample);
+        }
+
         onComplete?.Invoke(list);
     }
 
     private void HandleExamples(List<ExampleItemDTO> examples)
     {
         Debug.Log($"Exemplos carregados: {examples.Count}");
-        if (examples.Count > 0)
-        {
-            var sample = examples[UnityEngine.Random.Range(0, examples.Count)];
-            Debug.Log($"Exemplo amostrado:\nPergunta: {sample.question}");
-        }
+        // Apenas log, o OnExampleFetched já dispara o exemplo para fora
     }
 }
